@@ -12,6 +12,10 @@ public class Model {
         this.date = date;
     }
 
+    public void setFrom(String from) {
+        this.from = from;
+    }
+
     public long getID() {
         return ID;
     }

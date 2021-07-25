@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class BodyFragment extends Fragment {
 
     View view;
-    RecyclerView recyclerView;
+    static RecyclerView recyclerView;
     LinearLayoutManager linearLayoutManager;
     ArrayList<Model> datalist;
     Adapter adapter;

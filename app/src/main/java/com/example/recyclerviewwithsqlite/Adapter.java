@@ -8,8 +8,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -18,10 +20,11 @@ import java.util.ArrayList;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
-    private ArrayList<Model> datalist;
+    ArrayList<Model> datalist;
 
     public Adapter(ArrayList<Model> datalist) {
         this.datalist = datalist;
+        new ItemTouchHelper(swipe).attachToRecyclerView(BodyFragment.recyclerView);
         Log.d("TAG","Inside Adapter                             " + datalist);
     }
 
@@ -44,7 +47,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         String to =datalist.get(position).getTo();
         String chat=datalist.get(position).getChat();
         String date=datalist.get(position).getDate();
-        Log.d("TAG","Inside OnBindViewHolder %%%%%%%%%%%%%%%%%%%%");
+        Log.d("TAG","Inside OnBindViewHolder %%%%%%%%%%%%%%%%%%%%     "+String.valueOf(position));
         holder.setData(from,to,chat,date);
 
 
@@ -72,12 +75,13 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
                 @Override
                 public void onClick(View v) {
                     int position = getAbsoluteAdapterPosition();
-                    Model data =datalist.get(position);
-                    Long ID = data.getID();
-                    String from = "Manideep";
-                    String to = data.getTo();
-                    String chat = data.getChat();
-                    String datetime = data.getDate();
+                    //Model data =datalist.get(position);
+                    Long ID = datalist.get(position).getID();
+                    String from = "Bhalo Baba";
+                    datalist.get(position).setFrom(from);
+                    String to = datalist.get(position).getTo();
+                    String chat = datalist.get(position).getChat();
+                    String datetime = datalist.get(position).getDate();
                     MainActivity.mydb.update(ID,from,to,chat,datetime);
                     notifyItemChanged(position);
                 }
@@ -99,6 +103,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
                     showmessage(from,to,chat,datetime);
                 }
             });
+
         }
 
         public void setData(String from, String to, String chat,String date) {
@@ -140,6 +145,23 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             alert.show();
         }
     }
+
+    ItemTouchHelper.SimpleCallback swipe = new ItemTouchHelper.SimpleCallback(0,
+            ItemTouchHelper.RIGHT|ItemTouchHelper.LEFT) {
+        @Override
+        public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            return false;
+        }
+
+        @Override
+        public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
+            int position = viewHolder.getAbsoluteAdapterPosition();
+            long ID = datalist.get(position).getID();
+            MainActivity.mydb.Deletedata(ID);
+            notifyItemRemoved(position);
+        }
+    };
+
 
 
 }
